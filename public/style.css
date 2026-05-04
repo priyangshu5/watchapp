@@ -1,0 +1,320 @@
+/* ============================================================
+   style.css — QR Viewer UI Styles
+   Dark industrial aesthetic with phosphor-green accents
+   ============================================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #080c0a;
+  --surface: #0e1410;
+  --border: #1d2b20;
+  --accent: #39ff7e;
+  --accent-dim: #1a4a2e;
+  --accent-glow: rgba(57, 255, 126, 0.18);
+  --text: #d4f0dc;
+  --text-muted: #5a7a62;
+  --font-display: 'Syne', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --radius: 16px;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Background grid ──────────────────────────────────────── */
+.grid-bg {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(57,255,126,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57,255,126,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Ambient orbs ─────────────────────────────────────────── */
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+  animation: drift 12s ease-in-out infinite alternate;
+}
+.orb-1 {
+  width: 400px; height: 400px;
+  top: -120px; left: -100px;
+  background: rgba(57, 255, 126, 0.06);
+  animation-delay: 0s;
+}
+.orb-2 {
+  width: 300px; height: 300px;
+  bottom: -80px; right: -80px;
+  background: rgba(57, 255, 126, 0.04);
+  animation-delay: -5s;
+}
+@keyframes drift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(30px, 20px) scale(1.06); }
+}
+
+/* ── Container ────────────────────────────────────────────── */
+.container {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 20px;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+.logo-icon {
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+.accent { color: var(--accent); }
+
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent-dim);
+  border: 1px solid rgba(57,255,126,0.2);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 0.72rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.pulse-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+/* ── QR Card ──────────────────────────────────────────────── */
+.qr-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  width: 100%;
+  padding: 28px 0;
+}
+
+/* ── QR Frame ─────────────────────────────────────────────── */
+.qr-frame {
+  position: relative;
+  width: min(320px, 80vw);
+  height: min(320px, 80vw);
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 0 1px var(--border),
+    0 0 40px var(--accent-glow),
+    inset 0 0 20px rgba(0,0,0,0.4);
+}
+
+/* Corner accents */
+.corner {
+  position: absolute;
+  width: 20px; height: 20px;
+  border-color: var(--accent);
+  border-style: solid;
+}
+.corner-tl { top: 8px; left: 8px;  border-width: 2px 0 0 2px; border-radius: 4px 0 0 0; }
+.corner-tr { top: 8px; right: 8px; border-width: 2px 2px 0 0; border-radius: 0 4px 0 0; }
+.corner-bl { bottom: 8px; left: 8px;  border-width: 0 0 2px 2px; border-radius: 0 0 0 4px; }
+.corner-br { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; border-radius: 0 0 4px 0; }
+
+/* ── QR image ─────────────────────────────────────────────── */
+.qr-image-wrap {
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.qr-img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  transition: opacity 0.4s ease;
+}
+.qr-img.hidden { display: none; }
+
+/* ── Placeholder ──────────────────────────────────────────── */
+.qr-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+.spinner {
+  width: 44px; height: 44px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.placeholder-msg {
+  font-size: 0.85rem;
+  color: var(--text);
+  font-family: var(--font-mono);
+}
+.placeholder-sub {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* ── Instructions ─────────────────────────────────────────── */
+.instructions {
+  width: 100%;
+  text-align: center;
+}
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 18px;
+  letter-spacing: -0.03em;
+}
+.steps {
+  list-style: none;
+  counter-reset: step-counter;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+  max-width: 320px;
+  margin: 0 auto;
+}
+.steps li {
+  counter-increment: step-counter;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.steps li::before {
+  content: counter(step-counter);
+  flex-shrink: 0;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  border: 1px solid rgba(57,255,126,0.3);
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+.steps li strong {
+  color: var(--text);
+}
+
+/* ── Footer ───────────────────────────────────────────────── */
+.footer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.footer-tag {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.fullscreen-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+.fullscreen-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ── Status states ────────────────────────────────────────── */
+.status-pill.connected {
+  background: rgba(57,255,126,0.12);
+  border-color: var(--accent);
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 400px) {
+  .container { padding: 16px 14px; }
+  .logo { font-size: 1.1rem; }
+  .qr-card { gap: 20px; }
+}
+
+/* ── Fullscreen overlay ───────────────────────────────────── */
+:fullscreen .grid-bg,
+:fullscreen .orb { display: none; }
