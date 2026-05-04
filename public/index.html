@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>WhatsApp AI Bot — QR Scanner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Background grid -->
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <!-- Ambient orbs -->
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+
+  <main class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">WA<span class="accent">AI</span></span>
+      </div>
+      <div class="status-pill" id="statusPill">
+        <span class="pulse-dot"></span>
+        <span id="statusText">Waiting for QR...</span>
+      </div>
+    </header>
+
+    <!-- QR Card -->
+    <section class="qr-card" id="qrCard">
+      <div class="qr-frame">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+
+        <!-- QR image -->
+        <div class="qr-image-wrap" id="qrImageWrap">
+          <img
+            id="qrImage"
+            src="qr.png"
+            alt="WhatsApp QR Code"
+            class="qr-img hidden"
+            draggable="false"
+          />
+          <!-- Placeholder shown while waiting -->
+          <div class="qr-placeholder" id="qrPlaceholder">
+            <div class="spinner"></div>
+            <p class="placeholder-msg">Generating QR code…</p>
+            <p class="placeholder-sub">Auto-refreshes every 5 seconds</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Instructions -->
+      <div class="instructions">
+        <h1 class="title">Scan to connect</h1>
+        <ol class="steps">
+          <li>Open <strong>WhatsApp</strong> on your phone</li>
+          <li>Tap <strong>⋮ Menu → Linked Devices</strong></li>
+          <li>Tap <strong>"Link a Device"</strong></li>
+          <li>Point your camera at this QR code</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span class="footer-tag">Educational prototype · Not for production use</span>
+      <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle fullscreen">⛶</button>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
