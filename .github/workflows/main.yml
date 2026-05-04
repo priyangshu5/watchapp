@@ -1,0 +1,97 @@
+# ============================================================
+# .github/workflows/main.yml — GitHub Actions Workflow
+# ============================================================
+# Trigger: Manual (workflow_dispatch)
+# Purpose: Run the WhatsApp AI Bot on GitHub's servers
+# ============================================================
+
+name: Run WhatsApp AI Bot
+
+on:
+  workflow_dispatch: # Manual trigger only
+
+jobs:
+  run-bot:
+    name: WhatsApp Bot
+    runs-on: ubuntu-latest
+    timeout-minutes: 350 # ~5.8 hours (GitHub Actions max is 6h)
+
+    steps:
+      # ── 1. Checkout repository ───────────────────────────────
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ── 2. Setup Node.js ─────────────────────────────────────
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      # ── 3. Install system dependencies for Puppeteer/Chrome ──
+      - name: Install Chromium dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y \
+            chromium-browser \
+            libgbm-dev \
+            libnss3 \
+            libatk1.0-0 \
+            libatk-bridge2.0-0 \
+            libcups2 \
+            libdrm2 \
+            libxkbcommon0 \
+            libxcomposite1 \
+            libxdamage1 \
+            libxfixes3 \
+            libxrandr2 \
+            libasound2 \
+            libpangocairo-1.0-0 \
+            libgtk-3-0 \
+            --no-install-recommends
+          echo "PUPPETEER_EXECUTABLE_PATH=$(which chromium-browser)" >> $GITHUB_ENV
+          echo "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true" >> $GITHUB_ENV
+
+      # ── 4. Install Node dependencies ─────────────────────────
+      - name: Install npm packages
+        run: npm install
+
+      # ── 5. Create required directories ───────────────────────
+      - name: Create directories
+        run: |
+          mkdir -p public session
+
+      # ── 6. Install cloudflared for public tunnel ─────────────
+      # This exposes the local QR server via a public URL
+      - name: Install cloudflared
+        run: |
+          curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb -o cloudflared.deb
+          sudo dpkg -i cloudflared.deb
+
+      # ── 7. Start Cloudflare tunnel (exposes QR server) ───────
+      - name: Start Cloudflare tunnel for QR viewer
+        run: |
+          cloudflared tunnel --url http://localhost:3000 &> /tmp/cloudflared.log &
+          sleep 5
+          # Extract the public URL
+          TUNNEL_URL=$(grep -o 'https://[^ ]*\.trycloudflare\.com' /tmp/cloudflared.log | head -1)
+          echo "======================================================"
+          echo "🌐 QR VIEWER URL (open this on your phone/tablet):"
+          echo "   $TUNNEL_URL"
+          echo "======================================================"
+          echo "TUNNEL_URL=$TUNNEL_URL" >> $GITHUB_ENV
+
+      # ── 8. Run the bot ───────────────────────────────────────
+      - name: Run WhatsApp AI Bot
+        env:
+          PUPPETEER_EXECUTABLE_PATH: ${{ env.PUPPETEER_EXECUTABLE_PATH }}
+          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: true
+        run: |
+          echo ""
+          echo "======================================================"
+          echo "🤖 WhatsApp AI Bot starting..."
+          echo "📱 Open the QR Viewer URL above on your phone to scan"
+          echo "======================================================"
+          echo ""
+          node index.js
+
